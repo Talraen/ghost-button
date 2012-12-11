@@ -1,0 +1,4 @@
+jQuery Ghost Button
+===================
+
+The Ghost Button plugin takes an element (typically a button) and places it in a fixed location just outside the main content of a page, at the top or bottom.  If room does not permit the button to fit outside the page, it overlays the content and becomes semi-transparent until mouseover.
