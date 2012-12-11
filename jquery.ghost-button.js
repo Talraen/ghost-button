@@ -18,13 +18,21 @@
 	};
 
 	$.GhostButton.prototype = {
+		option: function(key, value) {
+			if ($.isPlainObject(key)) {
+				this.options = $.extend(true, this.options, key);
+			} else {
+				this.options[key] = value;
+			}
+
+			this._refresh();
+		},
+
 		_create: function(options) {
 			var ghostButton = this;
 			this.options = $.extend(true, {}, $.GhostButton.settings, options);
 
-			this.$context = $(this.options.context);
-
-			this._placeButton();
+			this._refresh();
 
 			$(window).resize(function() {
 				ghostButton._placeButton();
@@ -81,8 +89,14 @@
 
 			css.left = left;
 			css[this.vertical] = 0;
+			css[this.vertical == 'bottom' ? 'top' : 'right'] = '';
 
 			this.$element.css(css);
+		},
+
+		_refresh: function() {
+			this.$context = $(this.options.context);
+			this._placeButton();
 		}
 	};
 
