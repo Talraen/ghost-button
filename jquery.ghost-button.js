@@ -1,5 +1,5 @@
 /**
-* jQuery Ghost Button v1.0.0
+* jQuery Ghost Button v1.1.0
 * Button that floats in the corner of the page, or outside if room permits
 */
 
@@ -14,6 +14,7 @@
 		animate: false,
 		context: 'body',
 		opacity: 0.5,
+		minTop: 0,
 		position: 'top left'
 	};
 
@@ -28,6 +29,15 @@
 			this._refresh();
 		},
 
+		_getCurrentTop: function() {
+			if (this.vertical == 'top') {
+				var top = this.options.minTop - $(window).scrollTop();
+				return top < 0 ? 0 : top;
+			} else {
+				return 0;
+			}
+		},
+
 		_create: function(options) {
 			var ghostButton = this;
 			this.options = $.extend(true, {}, $.GhostButton.settings, options);
@@ -36,7 +46,13 @@
 
 			$(window).resize(function() {
 				ghostButton._placeButton();
-			})
+			}).trigger('resize');
+
+			if (this.options.minTop != 0) {
+				$(window).scroll(function() {
+					ghostButton.$element.css('top', ghostButton._getCurrentTop());
+				});
+			}
 
 			this.$element.hover(function() {
 				ghostButton._fade(1);
@@ -49,7 +65,7 @@
 
 		_fade: function(opacity) {
 			if (this.options.animate) {
-				this.$element.stop().animate({opacity: opacity}, this.options.animate);
+				this.$element.stop().fadeTo(this.options.animate, opacity);
 			} else {
 				this.$element.css('opacity', opacity);
 			}
@@ -88,7 +104,7 @@
 			this._fade(this.inContent ? this.options.opacity : 1);
 
 			css.left = left;
-			css[this.vertical] = 0;
+			css[this.vertical] = this._getCurrentTop();
 			css[this.vertical == 'bottom' ? 'top' : 'right'] = '';
 
 			this.$element.css(css);
